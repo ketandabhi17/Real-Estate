@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import { baseUrl } from "../constants/constanst";
 
 const SignIn = () => {
   const [formData, setFormData] = useState({});
@@ -14,12 +15,12 @@ const SignIn = () => {
   const handleSubmit = async (e: any) => {
     e.preventDefault();
     try {
-      const res = await fetch("http://localhost:7000/api/auth/signin", {
+      const res = await fetch(`${baseUrl}/api/auth/sign-in`, {
         method: "post",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(formData),  
+        body: JSON.stringify(formData),
       });
       console.log("afsdkofijuaisofduoi");
       const data = await res.json();

@@ -1,19 +1,12 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { baseUrl } from "../constants/constanst";
-import { useDispatch, useSelector } from "react-redux";
-import {
-  signInStart,
-  signInSuccess,
-  signInFailure,
-} from "../redux/user/userslice";
 
 const SignIn = () => {
   const [formData, setFormData] = useState({});
-  // const { loading, error } = useSelector((state: any) => state.user);
+  const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
-
-  const dispatch = useDispatch();
 
   const handleChange = (e: any) => {
     setFormData({ ...formData, [e.target.id]: e.target.value });
@@ -22,7 +15,6 @@ const SignIn = () => {
   const handleSubmit = async (e: any) => {
     e.preventDefault();
     try {
-      dispatch(signInStart());
       const res = await fetch(`${baseUrl}/api/auth/sign-in`, {
         method: "post",
         headers: {
@@ -33,13 +25,17 @@ const SignIn = () => {
       const data = await res.json();
       console.log(data);
       if (data.success === false) {
-        dispatch(signInFailure(data.message));
+        setLoading(false);
+        setError(data.message);
         return;
       }
-      dispatch(signInSuccess(data));
+      localStorage.setItem("access-token", data.token);
+      setLoading(false);
+      setError(null);
       navigate("/");
     } catch (error: any) {
-      dispatch(signInFailure(error.message));
+      setLoading(false);
+      setError(error.message);
     }
   };
   return (
@@ -62,11 +58,10 @@ const SignIn = () => {
         />
 
         <button
-          // disabled={loading}
+          disabled={loading}
           className="bg-slate-700 text-white p-3 rounded-lg uppercase hover:opacity-95 disabled:opacity-80"
         >
-          Sign In
-          {/* {loading ? "Loading..." : "Sign In"} */}
+          {loading ? "Loading..." : "Sign In"}
         </button>
       </form>
       <div className="flex gap-2 mt-5">
@@ -75,7 +70,7 @@ const SignIn = () => {
           <span className="text-blue-700">Sign up</span>
         </Link>
       </div>
-      {/* {error && <p className="text-red-500 mt-5">{error}</p>} */}
+      {error && <p className="text-red-500 mt-5">{error}</p>}
     </div>
   );
 };

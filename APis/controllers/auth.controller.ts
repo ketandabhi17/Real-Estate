@@ -21,11 +21,14 @@ export const SignIn = async (
       { id: validUser._id },
       process.env.JWT_SECRET as string
     );
-    const { password: pass, ...rest } = validUser._doc;
-    res
-      .cookie("access_token", token, { httpOnly: true })
-      .status(200)
-      .json(rest);
+    const {
+      password: pass,
+      updatedAt,
+      _id,
+      createdAt,
+      ...rest
+    } = validUser._doc;
+    res.status(200).json({ ...rest, token });
   } catch (error) {
     next(error);
   }
@@ -37,7 +40,8 @@ export const SignUp = async (
   next: NextFunction
 ) => {
   try {
-    const { username, email, password } = req.body;  const hashedPassword = bcryptjs.hashSync(password, 10);
+    const { username, email, password } = req.body;
+    const hashedPassword = bcryptjs.hashSync(password, 10);
     const newUser = new User({ username, email, password: hashedPassword });
     await newUser.save();
     res

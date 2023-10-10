@@ -21,14 +21,11 @@ export const SignIn = async (
       { id: validUser._id },
       process.env.JWT_SECRET as string
     );
-    const {
-      password: pass,
-      updatedAt,
-      _id,
-      createdAt,
-      ...rest
-    } = validUser._doc;
-    res.status(200).json({ ...rest, token });
+    const { password: pass, updatedAt, createdAt, ...rest } = validUser._doc;
+    res
+      .cookie("access_token", token, { httpOnly: true })
+      .status(200)
+      .send({ ...rest, token });
   } catch (error) {
     next(error);
   }

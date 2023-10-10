@@ -2,6 +2,7 @@ import express, { NextFunction, Request, Response } from "express";
 import mongoose from "mongoose";
 import dotenv from "dotenv";
 import authRoutes from "./routes/auth.routes";
+import userRoutes from "./routes/user.routes";
 import path from "path";
 import cookieParser from "cookie-parser";
 
@@ -31,6 +32,7 @@ app.listen(process.env.PORT, () => {
 app.use(cors({ origin: "http://localhost:5173" }));
 
 app.use("/api/auth", authRoutes);
+app.use("/api/user", userRoutes);
 
 app.use(express.static(path.join(dirname, "/client/dist")));
 

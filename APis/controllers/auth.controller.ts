@@ -65,7 +65,7 @@ export const googleAuth = async (
       res
         .cookie("access_token", token, { httpOnly: true })
         .status(200)
-        .json(rest);
+        .json({ ...rest, token });
     } else {
       const generatePassword =
         Math.random.toString().slice(-8) + Math.random.toString().slice(-8);
@@ -88,7 +88,7 @@ export const googleAuth = async (
       res
         .cookie("access_token", token, { httpOnly: true })
         .status(200)
-        .json(rest);
+        .json({ ...rest, token });
     }
   } catch (error: any) {
     console.log(error);

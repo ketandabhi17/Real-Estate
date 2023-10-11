@@ -26,6 +26,12 @@ export default function OAuth() {
         }),
       });
       const data = await res.json();
+      const expirationDate = new Date();
+      expirationDate.setTime(expirationDate.getTime() + 24 * 60 * 60 * 1000);
+      document.cookie = `access_token=${
+        data.token
+      }; expires=${expirationDate.toUTCString()}; path=/`;
+      localStorage.setItem("access_token", data.token);
       dispatch(signInSuccess(data));
       navigate("/");
     } catch (error: any) {

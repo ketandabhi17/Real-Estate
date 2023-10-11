@@ -11,16 +11,23 @@ import {
   updateUserStart,
   updateUserSuccess,
   updateUserFailure,
+  deleteUserStart,
+  deleteUserFailure,
+  deleteUserSuccess,
+  signOutStart,
+  signOutFailure,
+  signOutSuccess,
 } from "../redux/user/userslice";
 import { baseUrl } from "../constants/constanst";
 
 const Profile = () => {
-  const { currentUser } = useSelector((state: any) => state.user);
+  const { currentUser, error } = useSelector((state: any) => state.user);
   const fileRef: any = useRef(null);
   const [file, setFile] = useState(undefined);
   const [filePerc, setFilePerc] = useState(0);
   const [fileUploadError, setFileUploadError] = useState(false);
   const [formData, setFormData] = useState({});
+  const [updateSuccess, setUpdateSuccess] = useState(false);
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -69,7 +76,7 @@ const Profile = () => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify(formData),
-        credentials:"include"
+        credentials: "include",
       });
       const data = await res.json();
       if (data.success == false) {
@@ -77,9 +84,43 @@ const Profile = () => {
         return;
       }
       dispatch(updateUserSuccess(data));
+      setUpdateSuccess(true);
     } catch (error: any) {
       console.log(error);
       dispatch(updateUserFailure(error.message));
+    }
+  };
+
+  const handleDeleteUser = async () => {
+    try {
+      dispatch(deleteUserStart());
+      const res = await fetch(`${baseUrl}/api/user/delete/${currentUser._id}`, {
+        method: "DELETE",
+        credentials: "include",
+      });
+      const data: any = await res.json();
+      if (data.success === false) {
+        dispatch(deleteUserFailure(data.message));
+      }
+      dispatch(deleteUserSuccess(data));
+    } catch (error: any) {
+      dispatch(deleteUserFailure(error.message));
+    }
+  };
+
+  const handleSignOut = async () => {
+    try {
+      dispatch(signOutStart());
+
+      const res = await fetch(`${baseUrl}/api/auth/signout`);
+      const data: any = res.json();
+
+      if (data.success === false) {
+        dispatch(signOutFailure(data));
+      }
+      dispatch(signOutSuccess());
+    } catch (error: any) {
+      dispatch(signOutFailure(error.message));
     }
   };
   return (
@@ -135,9 +176,21 @@ const Profile = () => {
         </button>
       </form>
       <div className="flex justify-between mt-5">
-        <span className="text-red-700 cursor-pointer">Delete account</span>
-        <span className="text-red-700 cursor-pointer">Sign out</span>
+        <span
+          onClick={handleDeleteUser}
+          className="text-red-700 cursor-pointer"
+        >
+          Delete account
+        </span>
+        <span onClick={handleSignOut} className="text-red-700 cursor-pointer">
+          Sign out
+        </span>
       </div>
+
+      <p className="text-red-700 mt-5">{error ? error : ""}</p>
+      <p className="text-green-700 mt-5">
+        {updateSuccess ? "User is updated successfully!" : ""}
+      </p>
     </div>
   );
 };

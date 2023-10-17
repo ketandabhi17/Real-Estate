@@ -11,6 +11,8 @@ import { useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 
 export default function UpdateListing() {
+  type errorState = Boolean | String | any;
+
   const { currentUser } = useSelector((state: any) => state.user);
   const [files, setFiles] = useState([]);
   const [formData, setFormData] = useState({
@@ -31,7 +33,7 @@ export default function UpdateListing() {
   const [imageUploadError, setImageUploadError] = useState(false || "");
   const [uploading, setUploading] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(false);
+  const [error, setError] = useState<errorState>(false);
   const navigate = useNavigate();
   const handleImageSubmit = () => {
     try {
@@ -290,7 +292,9 @@ export default function UpdateListing() {
               />
               <div className="flex flex-col items-center">
                 <p>Regular price</p>
-                <span className="text-xs">($ / month)</span>
+                {formData.type === "rent" && (
+                  <span className="text-xs">($ / month)</span>
+                )}
               </div>
             </div>
 
@@ -308,7 +312,9 @@ export default function UpdateListing() {
                 />
                 <div className="flex flex-col items-center">
                   <p>Discounted price</p>
-                  <span className="text-xs">($ / month)</span>
+                  {formData.type === "rent" && (
+                    <span className="text-xs">($ / month)</span>
+                  )}
                 </div>
               </div>
             )}

@@ -139,7 +139,7 @@ export default function UpdateListing() {
           credentials: "include",
         }
       );
-      const data: any = res.json();
+      const data: any = await res.json();
       setLoading(false);
       if (data.success == false) {
         setError(true);

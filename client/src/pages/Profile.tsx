@@ -22,12 +22,13 @@ import { baseUrl } from "../constants/constanst";
 import { Link } from "react-router-dom";
 
 const Profile = () => {
+  type formdataState = any;
   const { currentUser, error } = useSelector((state: any) => state.user);
   const fileRef: any = useRef(null);
   const [file, setFile] = useState(undefined);
   const [filePerc, setFilePerc] = useState(0);
   const [fileUploadError, setFileUploadError] = useState(false);
-  const [formData, setFormData] = useState({});
+  const [formData, setFormData] = useState<formdataState>({});
   const [updateSuccess, setUpdateSuccess] = useState(false);
   const [showListingsError, setShowListingsError] = useState(false);
   const [userListing, setUserListings] = useState([]);
